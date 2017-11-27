@@ -1,6 +1,7 @@
 /**
  * @file node http push for develop
- */
+ * @author YernSun
+*/
 const fs = require('fs');
 const request = require('request');
 const path = require('path');
@@ -20,7 +21,7 @@ class Upload {
 
     /**
      * @private
-     * @param {string} filepath 
+     * @param {string} filepath
      */
     sendFile(filepath) {
         const to = this._getRemotePath(filepath);
@@ -42,7 +43,7 @@ class Upload {
 
     /**
      * @private
-     * @param {string} file 
+     * @param {string} file
      */
     _getRemotePath(file) {
         file = file.replace(/^\/?[^\/]+\/(.+)$/i, '$1');
@@ -69,7 +70,7 @@ class Upload {
 
     /**
      * @private
-     * @param {string} file 
+     * @param {string} file
      */
     _getLocalPath(file) {
         return path.resolve(file);
