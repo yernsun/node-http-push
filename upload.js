@@ -24,7 +24,7 @@ class Upload {
      */
     sendFile(filepath) {
         const to = this._getRemotePath(filepath);
-        const from = path.join(__dirname, filepath);
+        const from = this._getLocalPath(filepath);
         const formData = {
             to,
             file: fs.createReadStream(from)
@@ -45,8 +45,8 @@ class Upload {
      * @param {string} file 
      */
     _getRemotePath(file) {
-        let to = `${this._remote}/${file}`;
         file = file.replace(/^\/?[^\/]+\/(.+)$/i, '$1');
+        let to = `${this._remote}/${file}`;
         for (const filepath in this._map || {}) {
             const matches = this._map[filepath];
             if (matches instanceof Array) {
@@ -72,7 +72,8 @@ class Upload {
      * @param {string} file 
      */
     _getLocalPath(file) {
-        return `${this._local}/${file}`;
+        return path.resolve(file);
+        // return `${this._local}/${file}`;
     }
 
     upload(dir) {

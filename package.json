@@ -1,6 +1,6 @@
 {
-  "name": "http-push",
-  "version": "0.0.1",
+  "name": "node-http-push",
+  "version": "0.0.2",
   "description": "node http push for development",
   "main": "upload.js",
   "scripts": {
@@ -19,7 +19,7 @@
     "push"
   ],
   "author": "YernSun <yernsun@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/yernsun/node-http-push/issues"
   },
