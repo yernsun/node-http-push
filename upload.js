@@ -1,7 +1,7 @@
 /**
  * @file node http push for develop
  * @author YernSun
-*/
+ */
 const fs = require('fs');
 const request = require('request');
 const path = require('path');
@@ -17,6 +17,8 @@ class Upload {
         this._local = local;
         this._remote = remote;
         this._map = map;
+        this._watch = [];
+        this._ignore = [];
     }
 
     /**
@@ -77,19 +79,57 @@ class Upload {
         // return `${this._local}/${file}`;
     }
 
+    ignore() {
+        Array.prototype.push.apply(this._ignore, arguments);
+        return this;
+    }
+
+    watch() {
+        if (arguments.length === 0) {
+            this._watch = ['./'];
+        }
+        else {
+            Array.prototype.push.apply(this._watch, arguments);
+            /*
+            for(const i in arguments) {
+                this._watch.push()
+            }*/
+        }
+        return this;
+    }
+
+
     upload(dir) {
-        const stats = fs.statSync(dir);
-        this._local = dir || this._local;
-        if (stats.isDirectory()) {
-            fs.readdir(dir, (err, items) => {
-                for (let i = 0; i < items.length; i++) {
-                    this.upload(`${dir}/${items[i]}`);
-                }
-            })
-        } else if (stats.size > 0) {
-            this.sendFile(dir);
-        } else {
-            console.warn(`upload empty file named "${dir}"`);
+        const prefix = process.cwd();
+        let dirname = prefix;
+        if (dir && dir.substr(1) != '/' ) {
+            dirname += dir;
+        }
+        this._upload(dirname);
+        fs.watch(dirname, { encoding: 'utf-8', 'recursive': true }, function (eventType, filename) {
+            this._upload(filename);
+        });
+    }
+
+    _canUpload(dirname) {
+
+    }
+
+    _upload(dir) {
+        if (fs.existsSync(dir)) {
+            const stats = fs.statSync(dir);
+            this._local = dir || this._local;
+            if (stats.isDirectory()) {
+                fs.readdir(dir, (err, items) => {
+                    for (let i = 0; i < items.length; i++) {
+                        this._upload(`${dir}/${items[i]}`);
+                    }
+                })
+            } else if (stats.size > 0) {
+                this.sendFile(dir);
+            } else {
+                console.warn(`upload empty file named "${dir}"`);
+            }
         }
     }
 }
